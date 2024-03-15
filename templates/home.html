@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>IPL Win Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        select,
+        input[type="number"] {
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        #batting_team_result,
+        #bowling_team_result {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #batting_team_result,
+        #bowling_team_result {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .current_score,
+        .overs_completed,
+        .wickets_out {
+            display: inline-block;
+            width: calc(33.33% - 10px);
+            margin-right: 10px;
+        }
+
+        .current_score label,
+        .overs_completed label,
+        .wickets_out label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .current_score input[type="number"],
+        .overs_completed input[type="number"],
+        .wickets_out input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form id="predictionForm">
+            <h1>IPL Win Predictor</h1>
+            <div class="team">
+                <div>
+                    <label>Select the batting team</label>
+                    <select id="batting_team" , name="batting_team">
+                        {% for team in teams %}
+                        <option value="{{team}}">{{team}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label>Select the bowling team</label>
+                    <select id="bowling_team" , name="bowling_team">
+                        {% for team in teams %}
+                        <option value="{{team}}">{{team}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="city">
+                <label>Select city</label>
+                <select id="city" name="selected_city">
+                    {% for city in cities %}
+                    <option value="{{city}}">{{city}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="target">
+                <label>Enter Target</label>
+                <input type="number" name="target">
+            </div>
+            <div>
+                <div class="current_score">
+                    <label>Current score</label>
+                    <input type="number" name="score">
+                </div>
+                <div class="overs_completed">
+                    <label>Overs completed</label>
+                    <input type="number" name="overs">
+                </div>
+                <div class="wickets_out">
+                    <label>Wickets out</label>
+                    <input type="number" name="wickets">
+                </div>
+            </div>
+            <button type="submit">Predict Probability</button>
+        </form>
+        <div id="batting_team_result"></div>
+        <div id="bowling_team_result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            document.getElementById('batting_team_result').innerText = `${data.batting} : ${data.win} %`;
+            document.getElementById('bowling_team_result').innerText = `${data.bowling} : ${data.loss} %`;
+        });
+    </script>
+</body>
+
+</html>
