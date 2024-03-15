@@ -65,7 +65,3 @@ async def predict(request: Request,
         return {"win": str(round(win * 100)), "loss": str(round(loss * 100)), "batting": batting_team, "bowling": bowling_team}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-if __name__ == "__main__":
-    uvicorn.run("app:app", host='0.0.0.0', port=8000, reload=True)
